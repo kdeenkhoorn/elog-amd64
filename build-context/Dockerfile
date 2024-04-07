@@ -18,7 +18,7 @@ RUN apt-get update \
     && rm -rf /opt/build
 
 # Start with new base
-FROM ghcr.io/kdeenkhoorn/debian-stable:latest
+FROM ghcr.io/kdeenkhoorn/debian-stable-amd64:latest
 
 # Upgrade base OS image
 ENV DEBIAN_FRONTEND noninteractive
