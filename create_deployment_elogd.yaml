@@ -1,0 +1,109 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  labels:
+    app: elogd
+  name: elogd-data-disk
+  namespace: elogd
+spec:
+  claimRef:
+    name: elogd-data-claim
+    namespace: elogd
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 10Gi
+  hostPath:
+    path: /exports/elogd
+  storageClassName: microk8s-hostpath
+---
+apiVersion: apps/v1
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  labels:
+    app: elogd
+  name: elogd-data-claim
+  namespace: elogd
+spec:
+  volumeName: elogd-data-disk
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: elogd
+  name: elogd
+  namespace: elogd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: elogd
+  template:
+    metadata:
+      labels:
+        app: elogd
+    spec:
+      volumes:
+        - name: elogd-data
+          persistentVolumeClaim:
+            claimName: elogd-data-claim
+      containers:
+      - image: ghcr.io/kdeenkhoorn/elog-amd64:latest
+        name: elog-amd64
+        volumeMounts:
+        - name: elogd-data
+          mountPath: /opt/elog
+        ports:
+        - name: elogd-port
+          containerPort: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: elogd-ingress
+  namespace: elogd
+  annotations:
+    spec.ingressClassName: public
+    cert-manager.io/cluster-issuer: int-kdedesign-nl
+  labels:
+    app: elogd
+spec:
+  tls:
+  - hosts:
+    - elogd.int.kdedesign.nl
+    secretName: elogd-tls-secret
+  rules:
+  - host: elogd.int.kdedesign.nl
+    http:
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: elogd-service
+              port:
+                name: elogd-http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: elogd
+  name: elogd-service
+  namespace: elogd
+spec:
+  ports:
+  - name: elogd-http
+    port: 8080
+    protocol: TCP
+    targetPort: elogd-port
+  selector:
+    app: elogd
