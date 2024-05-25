@@ -1,4 +1,4 @@
-FROM ghcr.io/kdeenkhoorn/debian-stable-amd64:latest AS build
+FROM docker.io/library/debian:stable-slim AS build
 
 # Upgrade base OS image
 ENV DEBIAN_FRONTEND noninteractive
@@ -18,7 +18,7 @@ RUN apt-get update \
     && rm -rf /opt/build
 
 # Start with new base
-FROM ghcr.io/kdeenkhoorn/debian-stable-amd64:latest
+FROM docker.io/library/debian:stable-slim
 
 # Upgrade base OS image
 ENV DEBIAN_FRONTEND noninteractive

@@ -1,5 +1,5 @@
 # ELOG-AMD64
-This container image is an amd64 version of ELOG based on my own debian stable linux image.
+This container image is an amd64 version of ELOG.
 
 ## Image dependencies:
 - Volume /opt/elog for persistent storage
@@ -7,8 +7,8 @@ This container image is an amd64 version of ELOG based on my own debian stable l
 - User: elog (uid: 2001)
 - Group: elog (gid: 2001)
 
-## Build characteristics: 
-- Based on amd64 debian stable (ghcr.io/kdeenkhoorn/debian-stable-amd64:latest)
+## Build characteristics:
+- Based on amd64 debian stable (docker.io/library/debian:stable-slim)
 
 ## More info:
 - Check: https://github.com/kdeenkhoorn/elog-amd64

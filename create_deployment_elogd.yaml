@@ -58,6 +58,7 @@ spec:
       containers:
       - image: ghcr.io/kdeenkhoorn/elog-amd64:latest
         name: elog-amd64
+        imagePullPolicy: Always
         volumeMounts:
         - name: elogd-data
           mountPath: /opt/elog
